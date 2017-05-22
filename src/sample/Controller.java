@@ -6,12 +6,17 @@ import javafx.scene.control.Button;
 
 public class Controller {
 
+    private Server server;
+
     @FXML
     private Button buttonChangeServerState;
 
     public void changeServerStateHandler(ActionEvent event)
     {
-        Thread thread = new Thread(new Server());
-        thread.start();
+        if(server == null)
+        {
+            server = new Server();
+            server.start();
+        }
     }
 }

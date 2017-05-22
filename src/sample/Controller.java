@@ -17,6 +17,14 @@ public class Controller {
         {
             server = new Server();
             server.start();
+        }else if(server.isActive())
+        {
+            server.stopServer();
+            buttonChangeServerState.setText("Start server");
+        }else
+        {
+            server.resumeServer();
+            buttonChangeServerState.setText("Stop server");
         }
     }
 }

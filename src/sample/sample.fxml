@@ -15,8 +15,8 @@
     <AnchorPane prefHeight="300.0" prefWidth="400.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
       <children>
         <Button fx:id="buttonChangeServerState" layoutX="14.0" layoutY="259.0" mnemonicParsing="false" onAction="#changeServerStateHandler" prefWidth="172.0" text="Start server" />
-        <Button layoutX="214.0" layoutY="259.0" mnemonicParsing="false" prefWidth="172.0" text="Screenshot" />
-        <ImageView fitHeight="180.75" fitWidth="241.0" layoutX="80.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
+        <Button layoutX="214.0" layoutY="259.0" mnemonicParsing="false" onAction="#makeScreenshot" prefWidth="172.0" text="Screenshot" />
+        <ImageView fx:id="screenshotView" fitHeight="180.75" fitWidth="241.0" layoutX="80.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
       </children>
     </AnchorPane>
   </children>

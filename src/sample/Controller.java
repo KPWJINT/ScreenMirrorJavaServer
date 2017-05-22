@@ -1,8 +1,16 @@
 package sample;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Controller {
 
@@ -10,6 +18,8 @@ public class Controller {
 
     @FXML
     private Button buttonChangeServerState;
+    @FXML
+    private ImageView screenshotView;
 
     public void changeServerStateHandler(ActionEvent event)
     {
@@ -28,5 +38,22 @@ public class Controller {
             server.resumeServer();
             buttonChangeServerState.setText("Stop server");
         }
+    }
+
+    public void makeScreenshot(ActionEvent event)
+    {
+        Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+        BufferedImage captureImage = null;
+        try {
+            captureImage = new Robot().createScreenCapture(screenRect);
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
+
+        WritableImage FXCaptureImage = null;
+
+        FXCaptureImage = SwingFXUtils.toFXImage(captureImage, FXCaptureImage);
+
+        screenshotView.setImage(FXCaptureImage);
     }
 }

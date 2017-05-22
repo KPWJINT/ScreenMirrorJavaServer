@@ -1,5 +1,8 @@
 package sample;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -85,6 +88,7 @@ public class Server extends Thread{
             Socket client = serverSocket.accept();
             System.out.println("client has connected");
 
+            ImageIO.write(createScreenshot(),"JPG",client.getOutputStream());
 
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
             bufferedWriter.write("hi client!");
@@ -105,6 +109,19 @@ public class Server extends Thread{
         }catch ( IOException e){
             System.out.println("IOException");
         }
+    }
+
+    private BufferedImage createScreenshot()
+    {
+        Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+        BufferedImage captureImage = null;
+        try {
+            captureImage = new Robot().createScreenCapture(screenRect);
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
+
+        return captureImage;
     }
 
 //    private void sendData(Socket client) throws IOException

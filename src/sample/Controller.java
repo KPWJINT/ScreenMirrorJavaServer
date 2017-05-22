@@ -16,7 +16,9 @@ public class Controller {
         if(server == null)
         {
             server = new Server();
+            server.setDaemon(true);
             server.start();
+            buttonChangeServerState.setText("Stop server");
         }else if(server.isActive())
         {
             server.stopServer();

@@ -13,46 +13,76 @@ public class Server extends Thread{
     private static final int PORT =50268;
     private static final int SO_TIMEOUT = 2000;
 
+    private ServerSocket serverSocket = null;
+
     @Override
     public void run()
     {
-        ServerSocket serverSocket = null;
+        createServerSocekt(SO_TIMEOUT);
+
+        runServerSocket();
+
+        closeServerSocket();
+    }
+
+    private void createServerSocekt(int timeout)
+    {
         try
         {
             System.out.print("server starting ");
             serverSocket = new ServerSocket(PORT);
-            serverSocket.setSoTimeout(SO_TIMEOUT);
+            serverSocket.setSoTimeout(timeout);
         }catch (IOException e)
         {
             e.printStackTrace();
         }
+    }
 
+    private  void runServerSocket()
+    {
         while(true)
         {
             try {
-
                 System.out.println("client is connecting");
-                Socket client = serverSocket.accept();            //zacznie wykonywac dalej dopiero jak znajdzie!
+                Socket client = serverSocket.accept();
                 System.out.println("client has connected");
                 Thread.sleep(5000);
 
-    //            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
-    //            bufferedWriter.write("hi client!");
-    ////          bufferedWriter.flush();
-    //
-    //            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-    //            System.out.println("message from client "+ bufferedReader.readLine());
-    //
-    //            bufferedWriter.close();
-    //            bufferedReader.close();
-//                serverSocket.close();
+                sendData(client);
+
+                receiveData(client);
+
             }catch(SocketTimeoutException e){
                 System.out.println("SocketTimeoutException");
             }catch(InterruptedException e) {
                 System.out.println("InterruptedException");
             }catch ( IOException e){
-                e.printStackTrace();
+                System.out.println("IOException");
             }
         }
     }
+
+    private void sendData(Socket client) throws IOException
+    {
+        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+        bufferedWriter.write("hi client!");
+        bufferedWriter.close();
+    }
+
+    private void receiveData(Socket client) throws IOException
+    {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+        System.out.println("message from client "+ bufferedReader.readLine());
+        bufferedReader.close();
+    }
+
+    private void closeServerSocket()
+    {
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

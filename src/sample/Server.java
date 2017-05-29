@@ -5,14 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-/**
- * Created by Sobczak on 22.05.2017.
- */
 public class Server extends Thread{
 
     private static final int PORT =50268;
     private static final int SO_TIMEOUT = 2000;
-
+    private static int counter=0;
     private boolean isActive;
     private boolean toClose;
 
@@ -50,7 +47,6 @@ public class Server extends Thread{
     {
         try {
             createServerSocekt(SO_TIMEOUT);
-
             runServer();
 
             serverSocket.close();
@@ -64,18 +60,11 @@ public class Server extends Thread{
     private void createServerSocekt(int timeout) throws IOException
     {
             serverSocket = new ServerSocket(PORT);
-            serverSocket.setSoTimeout(timeout);
     }
 
     private  void runServer() throws InterruptedException {
-        while (!toClose)
-        {
-            while(isActive)
-            {
-                runServerSocket();
-            }
-            Thread.sleep(2000);
-        }
+       while(true)
+          runServerSocket();
     }
 
     private void runServerSocket()
@@ -84,24 +73,13 @@ public class Server extends Thread{
             System.out.println("client is connecting");
             Socket client = serverSocket.accept();
             System.out.println("client has connected");
-
-
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
-            bufferedWriter.write("hi client!");
-
-
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            System.out.println("message from client "+ bufferedReader.readLine());
-
+            counter++;
+            bufferedWriter.write(""+counter);
             bufferedWriter.close();
-            bufferedReader.close();
-
-            Thread.sleep(2000); //time between messages
 
         }catch(SocketTimeoutException e){
             System.out.println("SocketTimeoutException");
-        }catch(InterruptedException e) {
-            System.out.println("InterruptedException");
         }catch ( IOException e){
             System.out.println("IOException");
         }

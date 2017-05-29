@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane alignment="CENTER" hgap="10.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="sample.Controller">
+  <children>
+    <AnchorPane prefHeight="300.0" prefWidth="400.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+      <children>
+        <Button fx:id="buttonChangeServerState" layoutX="114.0" layoutY="259.0" mnemonicParsing="false" onAction="#changeServerStateHandler" prefWidth="172.0" text="Start server" />
+      </children>
+    </AnchorPane>
+  </children>
+</GridPane>

@@ -88,6 +88,7 @@ public class Server extends Thread{
             Socket client = serverSocket.accept();
             System.out.println("client has connected");
 
+            client.getChannel().configureBlocking(false);
             ImageIO.write(createScreenshot(),"JPG",client.getOutputStream());
 
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
@@ -96,6 +97,11 @@ public class Server extends Thread{
 
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             System.out.println("message from client "+ bufferedReader.readLine());
+
+
+            bufferedReader.readLine();
+            bufferedReader.readLine();
+            bufferedReader.readLine();
 
             bufferedWriter.close();
             bufferedReader.close();

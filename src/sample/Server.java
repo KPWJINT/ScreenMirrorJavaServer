@@ -13,11 +13,13 @@ import java.net.SocketTimeoutException;
  */
 public class Server extends Thread{
 
-    private static final int PORT =50268;
+    private static final int PORT =81;
     private static final int SO_TIMEOUT = 2000;
 
     private boolean isActive;
     private boolean toClose;
+
+    private int counter = 0;
 
     public Server()
     {
@@ -88,20 +90,23 @@ public class Server extends Thread{
             Socket client = serverSocket.accept();
             System.out.println("client has connected");
 
-//            client.getChannel().configureBlocking(false);
-//            ImageIO.write(createScreenshot(),"JPG",client.getOutputStream());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write( createScreenshot(), "jpg", baos );
+            baos.flush();
+            byte[] screenshotInByte = baos.toByteArray();
+            baos.close();
 
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
-            bufferedWriter.write("hi client!");
-
-            bufferedWriter.close();
-
-            Thread.sleep(2000); //time between messages
+            DataOutputStream dos = new DataOutputStream(client.getOutputStream());
+            dos.writeInt(screenshotInByte.length); // write length of the message
+            dos.write(screenshotInByte);           // write the message
+            dos.close();
+//
+//            Thread.sleep(2000); //time between messages
 
         }catch(SocketTimeoutException e){
             System.out.println("SocketTimeoutException");
-        }catch(InterruptedException e) {
-            System.out.println("InterruptedException");
+//        }catch(InterruptedException e) {
+//            System.out.println("InterruptedException");
         }catch ( IOException e){
             System.out.println("IOException");
         }

@@ -1,6 +1,7 @@
 package sample;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -18,8 +19,6 @@ public class Server extends Thread{
 
     private boolean isActive;
     private boolean toClose;
-
-    private int counter = 0;
 
     public Server()
     {
@@ -90,23 +89,23 @@ public class Server extends Thread{
             Socket client = serverSocket.accept();
             System.out.println("client has connected");
 
+            BufferedImage screenshot = createScreenshot();
+            screenshot = resize(screenshot, 480, 270);
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write( createScreenshot(), "jpg", baos );
+            ImageIO.write( screenshot, "jpg", baos );
             baos.flush();
+
             byte[] screenshotInByte = baos.toByteArray();
             baos.close();
 
             DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-            dos.writeInt(screenshotInByte.length); // write length of the message
-            dos.write(screenshotInByte);           // write the message
+            dos.writeInt(screenshotInByte.length);
+            dos.write(screenshotInByte);
             dos.close();
-//
-//            Thread.sleep(2000); //time between messages
 
         }catch(SocketTimeoutException e){
             System.out.println("SocketTimeoutException");
-//        }catch(InterruptedException e) {
-//            System.out.println("InterruptedException");
         }catch ( IOException e){
             System.out.println("IOException");
         }
@@ -125,14 +124,18 @@ public class Server extends Thread{
         return captureImage;
     }
 
-//    private void sendData(Socket client) throws IOException
-//    {
-//
-//    }
-//
-//    private void receiveData(Socket client) throws IOException
-//    {
-//
-//    }
+    public static BufferedImage resize(BufferedImage img, int newW, int newH) {
+        int w = img.getWidth();
+        int h = img.getHeight();
+        double proportion_w = w/newW;
+        double proportion_h = h/newH;
 
+        BufferedImage dimg = new BufferedImage(newW, newH, img.getType());
+        Graphics2D g = dimg.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.drawImage(img, 0, 0, (int)(w/(proportion_w-1)), (int)(h/(proportion_h-1)), 0, 0, w, h, null);
+        g.dispose();
+        return dimg;
+    }
 }

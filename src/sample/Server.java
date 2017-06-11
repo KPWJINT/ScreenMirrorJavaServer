@@ -5,9 +5,7 @@ import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
+import java.net.*;
 
 /**
  * Created by Sobczak on 22.05.2017.
@@ -47,7 +45,7 @@ public class Server extends Thread{
         toClose = true;
     }
 
-    private ServerSocket serverSocket = null;
+    private DatagramSocket serverSocket = null;
 
     @Override
     public void run()
@@ -67,7 +65,7 @@ public class Server extends Thread{
 
     private void createServerSocekt(int timeout) throws IOException
     {
-            serverSocket = new ServerSocket(PORT);
+            serverSocket = new DatagramSocket();
             serverSocket.setSoTimeout(timeout);
     }
 
@@ -85,28 +83,53 @@ public class Server extends Thread{
     private void runServerSocket()
     {
         try {
-            System.out.println("client is connecting");
-            Socket client = serverSocket.accept();
-            System.out.println("client has connected");
+            byte[] receiveMessege = new byte[1024];
+            DatagramSocket serverSocket = new DatagramSocket(PORT);
+            DatagramPacket receivePacket = new DatagramPacket(receiveMessege, receiveMessege.length);
 
-            BufferedImage screenshot = createScreenshot();
-            screenshot = resize(screenshot, 480, 270);
+            serverSocket.receive(receivePacket);
+            System.out.print(new String(receiveMessege, 0, receiveMessege.length));
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write( screenshot, "jpg", baos );
-            baos.flush();
+            serverSocket.close();
 
-            byte[] screenshotInByte = baos.toByteArray();
-            baos.close();
+            //
 
-            DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-            dos.writeInt(screenshotInByte.length);
-            dos.write(screenshotInByte);
-            dos.close();
 
+            ///
+//            System.out.println("client is connecting");
+//            DatagramSocket client = serverSocket.accept();
+//            System.out.println("client has connected");
+//
+//            DatagramSocket clientSocket = new DatagramSocket();
+//            InetAddress IPAddress = InetAddress.getByName("192.168.43.1");
+//            System.out.println(buffer.length);
+//
+//            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, IPAddress, 9876);
+//
+//            clientSocket.send(packet);
+//
+//            //
+//
+//            //
+//            BufferedImage screenshot = createScreenshot();
+//            screenshot = resize(screenshot, 480, 270);
+//
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            ImageIO.write( screenshot, "jpg", baos );
+//            baos.flush();
+//
+//            byte[] screenshotInByte = baos.toByteArray();
+//            baos.close();
+//
+//            DataOutputStream dos = new DataOutputStream(client.getOutputStream());
+//            dos.writeInt(screenshotInByte.length);
+//            dos.write(screenshotInByte);
+//            dos.close();
+//
         }catch(SocketTimeoutException e){
             System.out.println("SocketTimeoutException");
         }catch ( IOException e){
+            serverSocket.close();
             System.out.println("IOException");
         }
     }

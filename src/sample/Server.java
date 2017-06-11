@@ -1,7 +1,6 @@
 package sample;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -16,12 +15,10 @@ public class Server extends Thread{
     private static final int SO_TIMEOUT = 2000;
 
     private boolean isActive;
-    private boolean toClose;
 
     public Server()
     {
         isActive = true;
-        toClose = false;
     }
 
     public boolean isActive()
@@ -29,20 +26,10 @@ public class Server extends Thread{
         return isActive;
     }
 
-    //stops the server until resumeServer method is not called
+    //stops the server
     public void stopServer()
     {
         isActive = false;
-    }
-
-    public void resumeServer()
-    {
-        isActive = true;
-    }
-
-    public void closeServer()
-    {
-        toClose = true;
     }
 
     private DatagramSocket serverSocket = null;
@@ -51,90 +38,50 @@ public class Server extends Thread{
     public void run()
     {
         try {
-            createServerSocekt(SO_TIMEOUT);
+            createServerSocekt();
 
             runServer();
-
-            serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        serverSocket.close();
     }
 
-    private void createServerSocekt(int timeout) throws IOException
+    private void createServerSocekt() throws IOException
     {
-            serverSocket = new DatagramSocket();
-            serverSocket.setSoTimeout(timeout);
+        serverSocket = new DatagramSocket(PORT);
+        
+        byte[] receiveMessege = new byte[1024];
+        DatagramPacket receivePacket = new DatagramPacket(receiveMessege, receiveMessege.length);
+
+        serverSocket.receive(receivePacket);
+
+        serverSocket.connect(receivePacket.getSocketAddress());
     }
 
-    private  void runServer() throws InterruptedException {
-        while (!toClose)
-        {
+    private  void runServer() throws InterruptedException, IOException {
             while(isActive)
             {
                 runServerSocket();
             }
-            Thread.sleep(2000);
-        }
     }
 
-    private void runServerSocket()
+    private void runServerSocket() throws IOException
     {
-        try {
-            byte[] receiveMessege = new byte[1024];
-            DatagramSocket serverSocket = new DatagramSocket(PORT);
-            DatagramPacket receivePacket = new DatagramPacket(receiveMessege, receiveMessege.length);
+        BufferedImage screenshot = createScreenshot();
+        screenshot = resize(screenshot, 480, 270);
 
-            serverSocket.receive(receivePacket);
-            System.out.print(new String(receiveMessege, 0, receiveMessege.length));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write( screenshot, "jpg", baos );
+        baos.flush();
 
-            serverSocket.connect(receivePacket.getSocketAddress());
-            DatagramPacket sendPacket = new DatagramPacket(receiveMessege, receiveMessege.length);
-            serverSocket.send(sendPacket);
-            serverSocket.close();
+        byte[] screenshotInByte = baos.toByteArray();
+        baos.close();
 
-            //
-
-
-            ///
-//            System.out.println("client is connecting");
-//            DatagramSocket client = serverSocket.accept();
-//            System.out.println("client has connected");
-//
-//            DatagramSocket clientSocket = new DatagramSocket();
-//            InetAddress IPAddress = InetAddress.getByName("192.168.43.1");
-//            System.out.println(buffer.length);
-//
-//            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, IPAddress, 9876);
-//
-//            clientSocket.send(packet);
-//
-//            //
-//
-//            //
-//            BufferedImage screenshot = createScreenshot();
-//            screenshot = resize(screenshot, 480, 270);
-//
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            ImageIO.write( screenshot, "jpg", baos );
-//            baos.flush();
-//
-//            byte[] screenshotInByte = baos.toByteArray();
-//            baos.close();
-//
-//            DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-//            dos.writeInt(screenshotInByte.length);
-//            dos.write(screenshotInByte);
-//            dos.close();
-//
-        }catch(SocketTimeoutException e){
-            System.out.println("SocketTimeoutException");
-        }catch ( IOException e){
-            serverSocket.close();
-            System.out.println("IOException");
-        }
+        DatagramPacket sendPacket = new DatagramPacket(screenshotInByte, screenshotInByte.length);
+        serverSocket.send(sendPacket);
     }
 
     private BufferedImage createScreenshot()

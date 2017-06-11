@@ -19,14 +19,10 @@ public class Controller {
             server.setDaemon(true);
             server.start();
             buttonChangeServerState.setText("Stop server");
-        }else if(server.isActive())
+        }else
         {
             server.stopServer();
             buttonChangeServerState.setText("Start server");
-        }else
-        {
-            server.resumeServer();
-            buttonChangeServerState.setText("Stop server");
         }
     }
 }

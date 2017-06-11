@@ -84,23 +84,26 @@ public class Server extends Thread{
     private void runServerSocket()
     {
         try {
-            System.out.println("client is connecting");
+
             Socket client = serverSocket.accept();
-            System.out.println("client has connected");
+            DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
+            for(int i = 0; i < 1000000; i++)
+            {
+                BufferedImage screenshot = createScreenshot();
 
-            BufferedImage screenshot = createScreenshot();
-            screenshot = resize(screenshot, 480, 270);
+                screenshot = resize(screenshot, 480, 270);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write( screenshot, "jpg", baos );
-            baos.flush();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write( screenshot, "jpg", baos );
+                baos.flush();
 
-            byte[] screenshotInByte = baos.toByteArray();
-            baos.close();
+                byte[] screenshotInByte = baos.toByteArray();
+                baos.close();
 
-            DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-            dos.writeInt(screenshotInByte.length);
-            dos.write(screenshotInByte);
+
+                dos.writeInt(screenshotInByte.length);
+                dos.write(screenshotInByte);
+            }
             dos.close();
 
         }catch(SocketTimeoutException e){

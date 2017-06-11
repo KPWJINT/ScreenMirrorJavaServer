@@ -90,6 +90,9 @@ public class Server extends Thread{
             serverSocket.receive(receivePacket);
             System.out.print(new String(receiveMessege, 0, receiveMessege.length));
 
+            serverSocket.connect(receivePacket.getSocketAddress());
+            DatagramPacket sendPacket = new DatagramPacket(receiveMessege, receiveMessege.length);
+            serverSocket.send(sendPacket);
             serverSocket.close();
 
             //

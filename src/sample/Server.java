@@ -12,13 +12,14 @@ import java.net.*;
 public class Server extends Thread{
 
     private static final int PORT =81;
-    private static final int SO_TIMEOUT = 2000;
 
     private boolean isActive;
+    private boolean toClose;
 
     public Server()
     {
         isActive = true;
+        toClose = false;
     }
 
     public boolean isActive()
@@ -26,10 +27,20 @@ public class Server extends Thread{
         return isActive;
     }
 
-    //stops the server
+    //stops the server until resumeServer method is not called
     public void stopServer()
     {
         isActive = false;
+    }
+
+    public void resumeServer()
+    {
+        isActive = true;
+    }
+
+    public void closeServer()
+    {
+        toClose = true;
     }
 
     private DatagramSocket serverSocket = null;
@@ -38,7 +49,7 @@ public class Server extends Thread{
     public void run()
     {
         try {
-            createServerSocekt();
+            serverSocket = new DatagramSocket(PORT);
 
             runServer();
         } catch (IOException e) {
@@ -49,23 +60,18 @@ public class Server extends Thread{
         serverSocket.close();
     }
 
-    private void createServerSocekt() throws IOException
+    private  void runServer() throws InterruptedException, IOException
     {
-        serverSocket = new DatagramSocket(PORT);
-        
-        byte[] receiveMessege = new byte[1024];
-        DatagramPacket receivePacket = new DatagramPacket(receiveMessege, receiveMessege.length);
-
-        serverSocket.receive(receivePacket);
-
-        serverSocket.connect(receivePacket.getSocketAddress());
-    }
-
-    private  void runServer() throws InterruptedException, IOException {
+        while(!toClose)
+        {
+            while(!isActive())
+                Thread.sleep(1000);
+            connectToClient();
             while(isActive)
             {
                 runServerSocket();
             }
+        }
     }
 
     private void runServerSocket() throws IOException
@@ -83,6 +89,16 @@ public class Server extends Thread{
 
         DatagramPacket sendPacket = new DatagramPacket(screenshotInByte, screenshotInByte.length);
         serverSocket.send(sendPacket);
+    }
+
+    private void connectToClient() throws IOException
+    {
+        byte[] receiveMessege = new byte[1024];
+        DatagramPacket receivePacket = new DatagramPacket(receiveMessege, receiveMessege.length);
+
+        serverSocket.receive(receivePacket);
+
+        serverSocket.connect(receivePacket.getSocketAddress());
     }
 
     private BufferedImage createScreenshot()

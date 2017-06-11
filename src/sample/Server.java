@@ -78,7 +78,6 @@ public class Server extends Thread{
             {
                 runServerSocket();
             }
-            Thread.sleep(2000);
         }
     }
 

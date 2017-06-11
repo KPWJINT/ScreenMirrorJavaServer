@@ -78,6 +78,7 @@ public class Server extends Thread{
         baos.flush();
 
         byte[] screenshotInByte = baos.toByteArray();
+        System.out.println(screenshotInByte.length);
         baos.close();
 
         DatagramPacket sendPacket = new DatagramPacket(screenshotInByte, screenshotInByte.length);

@@ -14,7 +14,7 @@ import java.net.SocketTimeoutException;
  */
 public class Server extends Thread{
 
-    private static final int PORT =81;
+    private static final int PORT =50243;
     private static final int SO_TIMEOUT = 2000;
     private static final int SCREENSHOT_W = 480;
     private static final int SCREENSHOT_H = 270;
@@ -108,7 +108,7 @@ public class Server extends Thread{
 
             byte[] screenshotInByte = baos.toByteArray();
             baos.close();
-
+            dos.flush();
             dos.writeInt(screenshotInByte.length);
             dos.write(screenshotInByte);
         }catch (IOException e){

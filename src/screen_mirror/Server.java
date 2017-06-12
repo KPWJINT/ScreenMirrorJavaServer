@@ -1,7 +1,5 @@
 package screen_mirror;
 
-import com.intellij.ide.ui.EditorOptionsTopHitProvider;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;

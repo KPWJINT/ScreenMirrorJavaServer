@@ -1,4 +1,4 @@
-package sample;
+package screen_mirror;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,4 +29,6 @@ public class Controller {
             buttonChangeServerState.setText("Stop server");
         }
     }
+
+
 }

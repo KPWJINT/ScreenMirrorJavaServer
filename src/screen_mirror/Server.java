@@ -1,4 +1,6 @@
-package sample;
+package screen_mirror;
+
+import com.intellij.ide.ui.EditorOptionsTopHitProvider;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -62,57 +64,53 @@ public class Server extends Thread{
             runServer();
 
             serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void createServerSocekt(int timeout) throws IOException
+    private void createServerSocekt(int timeout) throws Exception
     {
             serverSocket = new ServerSocket(PORT);
             serverSocket.setSoTimeout(timeout);
     }
 
-    private  void runServer() throws InterruptedException, IOException {
+    private  void runServer(){
         while (!toClose)
         {
             try {
                 Socket client = serverSocket.accept();
                 dos = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
+
                 while(isActive)
                 {
-                    runServerSocket();
+                    BufferedImage screenshot = createScreenshot();
+                    screenshot = resize(screenshot, SCREENSHOT_W, SCREENSHOT_H);
+                    sendScreenshot(screenshot);
                 }
+
                 dos.close();
+
             }catch (SocketTimeoutException e) {
                 System.out.println("SocketTimeoutException");
             } catch (SocketException e) {
                 System.out.println("SocketException");
+            }catch (IOException e) {
+                System.out.println("IOException");
             }
         }
     }
 
-    private void runServerSocket() throws IOException
+    private void sendScreenshot(BufferedImage screenshot)
     {
         try
         {
-            BufferedImage screenshot = createScreenshot();
-
-            screenshot = resize(screenshot, SCREENSHOT_W, SCREENSHOT_H);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write( screenshot, "jpg", baos );
-            baos.flush();
-
-            byte[] screenshotInByte = baos.toByteArray();
-            baos.close();
+            byte[] screenshotInByte = toByteArray(screenshot);
             dos.flush();
             dos.writeInt(screenshotInByte.length);
             dos.write(screenshotInByte);
         }catch (IOException e){
-            dos.flush();
+            System.out.println("IOException");
         }
     }
 
@@ -123,24 +121,40 @@ public class Server extends Thread{
         try {
             captureImage = new Robot().createScreenCapture(screenRect);
         } catch (AWTException e) {
-            e.printStackTrace();
+            System.out.println("createScreenshot - AWTException");
         }
 
         return captureImage;
     }
 
-    public static BufferedImage resize(BufferedImage img, int newW, int newH) {
-        int w = img.getWidth();
-        int h = img.getHeight();
-        double proportion_w = w/newW;
-        double proportion_h = h/newH;
+    private static BufferedImage resize(BufferedImage img, int newW, int newH) {
+        BufferedImage dimg = null;
+        if(img != null)
+        {
+            int w = img.getWidth();
+            int h = img.getHeight();
+            double proportion_w = w/newW;
+            double proportion_h = h/newH;
 
-        BufferedImage dimg = new BufferedImage(newW, newH, img.getType());
-        Graphics2D g = dimg.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g.drawImage(img, 0, 0, (int)(w/(proportion_w-1)), (int)(h/(proportion_h-1)), 0, 0, w, h, null);
-        g.dispose();
+            dimg = new BufferedImage(newW, newH, img.getType());
+            Graphics2D g = dimg.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g.drawImage(img, 0, 0, (int)(w/(proportion_w-1)), (int)(h/(proportion_h-1)), 0, 0, w, h, null);
+            g.dispose();
+        }
         return dimg;
+    }
+
+    private byte[] toByteArray(BufferedImage screenshot) throws IOException
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write( screenshot, "jpg", baos );
+        baos.flush();
+
+        byte[] screenshotInByte = baos.toByteArray();
+        baos.close();
+
+        return screenshotInByte;
     }
 }

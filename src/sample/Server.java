@@ -1,12 +1,12 @@
 package sample;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 /**
@@ -16,6 +16,10 @@ public class Server extends Thread{
 
     private static final int PORT =81;
     private static final int SO_TIMEOUT = 2000;
+    private static final int SCREENSHOT_W = 480;
+    private static final int SCREENSHOT_H = 270;
+
+    private DataOutputStream dos;
 
     private boolean isActive;
     private boolean toClose;
@@ -71,45 +75,44 @@ public class Server extends Thread{
             serverSocket.setSoTimeout(timeout);
     }
 
-    private  void runServer() throws InterruptedException {
+    private  void runServer() throws InterruptedException, IOException {
         while (!toClose)
         {
-            while(isActive)
-            {
-                runServerSocket();
+            try {
+                Socket client = serverSocket.accept();
+                dos = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
+                while(isActive)
+                {
+                    runServerSocket();
+                }
+                dos.close();
+            }catch (SocketTimeoutException e) {
+                System.out.println("SocketTimeoutException");
+            } catch (SocketException e) {
+                System.out.println("SocketException");
             }
         }
     }
 
-    private void runServerSocket()
+    private void runServerSocket() throws IOException
     {
-        try {
+        try
+        {
+            BufferedImage screenshot = createScreenshot();
 
-            Socket client = serverSocket.accept();
-            DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
-            for(int i = 0; i < 1000000; i++)
-            {
-                BufferedImage screenshot = createScreenshot();
+            screenshot = resize(screenshot, SCREENSHOT_W, SCREENSHOT_H);
 
-                screenshot = resize(screenshot, 480, 270);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write( screenshot, "jpg", baos );
+            baos.flush();
 
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write( screenshot, "jpg", baos );
-                baos.flush();
+            byte[] screenshotInByte = baos.toByteArray();
+            baos.close();
 
-                byte[] screenshotInByte = baos.toByteArray();
-                baos.close();
-
-
-                dos.writeInt(screenshotInByte.length);
-                dos.write(screenshotInByte);
-            }
-            dos.close();
-
-        }catch(SocketTimeoutException e){
-            System.out.println("SocketTimeoutException");
-        }catch ( IOException e){
-            System.out.println("IOException");
+            dos.writeInt(screenshotInByte.length);
+            dos.write(screenshotInByte);
+        }catch (IOException e){
+            dos.flush();
         }
     }
 

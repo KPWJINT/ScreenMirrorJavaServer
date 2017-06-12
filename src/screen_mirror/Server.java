@@ -73,7 +73,7 @@ public class Server extends Thread{
             serverSocket.setSoTimeout(timeout);
     }
 
-    private  void runServer(){
+    private  void runServer() throws IOException{
         while (!toClose)
         {
             try {
@@ -93,23 +93,19 @@ public class Server extends Thread{
                 System.out.println("SocketTimeoutException");
             } catch (SocketException e) {
                 System.out.println("SocketException");
-            }catch (IOException e) {
+            }catch (IOException e){
                 System.out.println("IOException");
             }
         }
     }
 
-    private void sendScreenshot(BufferedImage screenshot)
+    private void sendScreenshot(BufferedImage screenshot) throws IOException
     {
-        try
-        {
             byte[] screenshotInByte = toByteArray(screenshot);
             dos.flush();
             dos.writeInt(screenshotInByte.length);
             dos.write(screenshotInByte);
-        }catch (IOException e){
-            System.out.println("IOException");
-        }
+
     }
 
     private BufferedImage createScreenshot()

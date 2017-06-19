@@ -16,8 +16,8 @@ public class Server extends Thread{
 
     private static final int PORT =50243;
     private static final int SO_TIMEOUT = 2000;
-    private static final int SCREENSHOT_W = 480;
-    private static final int SCREENSHOT_H = 270;
+    private static final int SCREENSHOT_W = 424;
+    private static final int SCREENSHOT_H = 220;
 
     private DataOutputStream dos;
 
@@ -127,14 +127,12 @@ public class Server extends Thread{
         {
             int w = img.getWidth();
             int h = img.getHeight();
-            double proportion_w = w/newW;
-            double proportion_h = h/newH;
 
             dimg = new BufferedImage(newW, newH, img.getType());
             Graphics2D g = dimg.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                     RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            g.drawImage(img, 0, 0, (int)(w/(proportion_w-1)), (int)(h/(proportion_h-1)), 0, 0, w, h, null);
+            g.drawImage(img, 0, 0, newW, newH, 0, 0, w, h, null);
             g.dispose();
         }
         return dimg;

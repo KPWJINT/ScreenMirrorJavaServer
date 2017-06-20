@@ -13,19 +13,14 @@ public class Controller {
 
     public void changeServerStateHandler(ActionEvent event)
     {
-        if(server == null)
-        {
-            server = new Server();
-            server.setDaemon(true);
-            server.start();
-            buttonChangeServerState.setText("Stop server");
-        }else if(server.isActive())
+        if(server != null && server.isActive())
         {
             server.stopServer();
             buttonChangeServerState.setText("Start server");
-        }else
-        {
-            server.resumeServer();
+        }else {
+            server = new Server();
+            server.setDaemon(true);
+            server.start();
             buttonChangeServerState.setText("Stop server");
         }
     }

@@ -75,26 +75,25 @@ public class Server extends Thread{
 
     private  void runServer() throws IOException{
 
-                while (isActive)
-                {
-                    try {
-                    Socket client = serverSocket.accept();
-                    dos = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
+        while (isActive)
+        {
+            try {
+                Socket client = serverSocket.accept();
+                dos = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
 
-                    BufferedImage screenshot = createScreenshot();
-                    screenshot = resize(screenshot, SCREENSHOT_W, SCREENSHOT_H);
-                    sendScreenshot(screenshot);
+                BufferedImage screenshot = createScreenshot();
+                screenshot = resize(screenshot, SCREENSHOT_W, SCREENSHOT_H);
+                sendScreenshot(screenshot);
+                dos.close();
 
-                    dos.close();
-
-                    }catch(SocketTimeoutException e){
-                        System.out.println("SocketTimeoutException");
-                    } catch(SocketException e){
-                        System.out.println("SocketException");
-                    }catch(IOException e){
-                        System.out.println("IOException");
-                }
+            }catch(SocketTimeoutException e){
+                System.out.println("SocketTimeoutException");
+            } catch(SocketException e){
+                System.out.println("SocketException");
+            }catch(IOException e){
+                System.out.println("IOException");
             }
+        }
 
     }
 

@@ -1,14 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 
-<GridPane alignment="CENTER" hgap="10.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="screen_mirror.Controller">
-  <children>
-    <AnchorPane prefHeight="300.0" prefWidth="400.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
-      <children>
-        <Button fx:id="buttonChangeServerState" layoutX="114.0" layoutY="259.0" mnemonicParsing="false" onAction="#changeServerStateHandler" prefWidth="172.0" text="Start server" />
-      </children>
-    </AnchorPane>
-  </children>
-</GridPane>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screen_mirror.Controller">
+   <children>
+      <GridPane fx:id="grid" prefHeight="400.0" prefWidth="600.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="0.1" percentWidth="1.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" percentWidth="98.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="0.1" percentWidth="1.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints />
+          <RowConstraints minHeight="1.0" percentHeight="1.0" prefHeight="1.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="1.0" percentHeight="3.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="1.0" percentHeight="96.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="1.0" percentHeight="1.0" prefHeight="1.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Region prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+               <cursor>
+                  <Cursor fx:constant="NW_RESIZE" />
+               </cursor></Region>
+            <Region prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <cursor>
+                  <Cursor fx:constant="NE_RESIZE" />
+                </cursor></Region>
+             <Region prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+             <cursor>
+                 <Cursor fx:constant="N_RESIZE" />
+             </cursor></Region>
+             <Region prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                 <cursor>
+                     <Cursor fx:constant="SE_RESIZE" />
+                 </cursor></Region>
+             <Region prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="4">
+             <cursor>
+                 <Cursor fx:constant="SW_RESIZE" />
+             </cursor></Region>
+             <Region prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3">
+                 <cursor>
+                     <Cursor fx:constant="W_RESIZE" />
+                 </cursor></Region>
+             <Region prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                 <cursor>
+                     <Cursor fx:constant="S_RESIZE" />
+                 </cursor></Region>
+             <Region prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                 <cursor>
+                     <Cursor fx:constant="E_RESIZE" />
+                 </cursor></Region>
+             <Region prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                 <cursor>
+                     <Cursor fx:constant="MOVE" />
+                 </cursor></Region>
+            <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <children>
+                  <Button fx:id="buttonChangeServerState" mnemonicParsing="false" prefHeight="43.0" prefWidth="92.0" text="START" />
+               </children>
+            </StackPane>
+            <HBox prefHeight="7.0" prefWidth="588.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+              </HBox>
+         </children>
+
+      </GridPane>
+   </children>
+</AnchorPane>

@@ -19,26 +19,16 @@ public class Controller {
 
     public void changeServerStateHandler(ActionEvent event)
     {
-        if(server == null)
-        {
-            server = new Server();
-            server.setDaemon(true);
-            server.start();
-
-            labelMain.setText("Server is running");
-            labelButtonDescription.setText("Press button to stop the server");
-            buttonChangeServerState.setText("Stop");
-        }else if(server.isActive())
+        if(server != null && server.isActive())
         {
             server.stopServer();
-
             labelMain.setText("Server paused");
             labelButtonDescription.setText("Press button to resume the server");
             buttonChangeServerState.setText("Start");
-        }else
-        {
-            server.resumeServer();
-
+        }else {
+            server = new Server();
+            server.setDaemon(true);
+            server.start();
             labelMain.setText("Server is running");
             labelButtonDescription.setText("Press button to stop the server");
             buttonChangeServerState.setText("Stop");

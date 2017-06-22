@@ -15,7 +15,7 @@ import java.net.SocketTimeoutException;
 public class Server extends Thread{
 
     private static final int PORT =50243;
-    private static final int SO_TIMEOUT = 2000;
+    private static final int SO_TIMEOUT =10;
     private static final int SCREENSHOT_W = 424;
     private static final int SCREENSHOT_H = 220;
 
@@ -74,27 +74,25 @@ public class Server extends Thread{
     }
 
     private  void runServer() throws IOException{
+        while (isActive)
+        {
+            try {
+                Socket client = serverSocket.accept();
+                dos = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
 
-                while (isActive)
-                {
-                    try {
-                    Socket client = serverSocket.accept();
-                    dos = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
+                BufferedImage screenshot = createScreenshot();
+                screenshot = resize(screenshot, SCREENSHOT_W, SCREENSHOT_H);
+                sendScreenshot(screenshot);
+                dos.close();
 
-                    BufferedImage screenshot = createScreenshot();
-                    screenshot = resize(screenshot, SCREENSHOT_W, SCREENSHOT_H);
-                    sendScreenshot(screenshot);
-
-                    dos.close();
-
-                    }catch(SocketTimeoutException e){
-                        System.out.println("SocketTimeoutException");
-                    } catch(SocketException e){
-                        System.out.println("SocketException");
-                    }catch(IOException e){
-                        System.out.println("IOException");
-                }
+            }catch(SocketTimeoutException e){
+                System.out.println("SocketTimeoutException");
+            } catch(SocketException e){
+                System.out.println("SocketException");
+            }catch(IOException e){
+                System.out.println("IOException");
             }
+        }
 
     }
 

@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <GridPane alignment="CENTER" hgap="10.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="screen_mirror.Controller">
   <children>
     <AnchorPane prefHeight="300.0" prefWidth="400.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
       <children>
-        <Button fx:id="buttonChangeServerState" layoutX="114.0" layoutY="259.0" mnemonicParsing="false" onAction="#changeServerStateHandler" prefWidth="172.0" text="Start server" />
+        <Button fx:id="buttonChangeServerState" contentDisplay="CENTER" layoutX="29.0" layoutY="237.0" mnemonicParsing="false" onAction="#changeServerStateHandler" prefHeight="49.0" prefWidth="328.0" text="Start" textAlignment="CENTER">
+          <font>
+            <Font size="20.0" />
+          </font>
+        </Button>
+        <Label fx:id="labelMain" alignment="CENTER" contentDisplay="CENTER" layoutX="20.0" layoutY="14.0" prefHeight="145.0" prefWidth="361.0" style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;" text="Welcome in screen mirror server" textAlignment="CENTER" wrapText="true">
+          <font>
+            <Font size="35.0" />
+          </font>
+        </Label>
+        <Label fx:id="labelButtonDescription" alignment="CENTER" contentDisplay="CENTER" layoutX="29.0" layoutY="159.0" prefHeight="65.0" prefWidth="343.0" text="Press button to start the server" textAlignment="CENTER" wrapText="true">
+          <font>
+            <Font size="22.0" />
+          </font>
+        </Label>
       </children>
     </AnchorPane>
   </children>

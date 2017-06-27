@@ -16,7 +16,6 @@ public class Controller {
     @FXML
     private Label labelButtonDescription;
 
-
     public void changeServerStateHandler(ActionEvent event)
     {
         if(server != null && server.isActive())
@@ -34,6 +33,4 @@ public class Controller {
             buttonChangeServerState.setText("Stop");
         }
     }
-
-
 }

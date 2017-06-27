@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 /**
@@ -22,12 +21,10 @@ public class Server extends Thread{
     private DataOutputStream dos;
 
     private boolean isActive;
-    private boolean toClose;
 
     public Server()
     {
         isActive = true;
-        toClose = false;
     }
 
     public boolean isActive()
@@ -35,20 +32,9 @@ public class Server extends Thread{
         return isActive;
     }
 
-    //stops the server until resumeServer method is not called
     public void stopServer()
     {
         isActive = false;
-    }
-
-    public void resumeServer()
-    {
-        isActive = true;
-    }
-
-    public void closeServer()
-    {
-        toClose = true;
     }
 
     private ServerSocket serverSocket = null;
@@ -57,17 +43,17 @@ public class Server extends Thread{
     public void run()
     {
         try {
-            createServerSocekt(SO_TIMEOUT);
+            createServerSocket(SO_TIMEOUT);
 
             runServer();
 
             serverSocket.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("IOException");
         }
     }
 
-    private void createServerSocekt(int timeout) throws Exception
+    private void createServerSocket(int timeout) throws IOException
     {
             serverSocket = new ServerSocket(PORT);
             serverSocket.setSoTimeout(timeout);
@@ -87,13 +73,10 @@ public class Server extends Thread{
 
             }catch(SocketTimeoutException e){
                 System.out.println("SocketTimeoutException");
-            } catch(SocketException e){
-                System.out.println("SocketException");
             }catch(IOException e){
                 System.out.println("IOException");
             }
         }
-
     }
 
     private void sendScreenshot(BufferedImage screenshot) throws IOException
@@ -102,7 +85,6 @@ public class Server extends Thread{
             dos.flush();
             dos.writeInt(screenshotInByte.length);
             dos.write(screenshotInByte);
-
     }
 
     private BufferedImage createScreenshot()
